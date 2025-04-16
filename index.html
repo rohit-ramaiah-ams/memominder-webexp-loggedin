@@ -14,57 +14,24 @@
       window.amplitude.init("383a067bf6e6a9ff502156492a2bdeb8");
     </script>
 
-<script type="text/javascript" src="https://cdn.amplitude.com/script/383a067bf6e6a9ff502156492a2bdeb8.experiment.js"></script>
-
-    <style>
-      .login-container {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        text-align: right;
-      }
-    </style>
 
     <script>
-      const users = {
-        Rohit1234: "password",
-        Maja1234: "password",
-        Salva1234: "password"
-      };
+     
+     let userRandomiser = Math.floor(Math.random() * 11);
+      console.log("random number :: " + userRandomiser);
 
-      let currentUser = null;
-
-      function loginUser(event) {
-        event.preventDefault();
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        if (users[username] && users[username] === password) {
-          currentUser = username;
-          document.getElementById("login-form").style.display = "none";
-          document.getElementById("welcome-message").innerText = `Welcome, ${currentUser}`;
-          document.getElementById("logout-button").style.display = "inline";
-
-          // Amplitude Identify and Login Event
-          const identify = new amplitude.Identify()
-            .set("user_type", "dummy")
-            .set("targetinguserProp", username === "Rohit1234" ? "targetUser" : "do-nottargetUSer");
-          amplitude.identify(identify);
-          amplitude.setUserId(currentUser);
-          amplitude.track("login");
-
-        } else {
-          alert("Invalid credentials!");
-        }
+      if (userRandomiser % 2 === 0) {
+        console.log("Even Number, let's target the user in the Experiment");
+        const identifyEvent = new amplitude.Identify();
+        identifyEvent.set('targetingUserProp', 'targetUser'); 
+        amplitude.identify(identifyEvent);
       }
-
-      function logoutUser() {
-        amplitude.track("logout", { user: currentUser });
-        amplitude.reset();
-
-        currentUser = null;
-        document.getElementById("login-form").style.display = "inline";
-        document.getElementById("welcome-message").innerText = "";
-        document.getElementById("logout-button").style.display = "none";
+      else
+      {
+        console.log("Odd Number, do not target the user in the Experiment");
+        const identifyEvent = new amplitude.Identify();
+        identifyEvent.set('targetingUserProp', 'doNottargetUser'); 
+        amplitude.identify(identifyEvent);
       }
 
       function setLabel() {
@@ -73,19 +40,11 @@
         document.getElementById("add-memo").style.visibility = "";
       }
     </script>
+
+<script type="text/javascript" src="https://cdn.amplitude.com/script/383a067bf6e6a9ff502156492a2bdeb8.experiment.js"></script>
   </head>
 
   <body onload="setLabel()">
-    <div class="login-container">
-      <form id="login-form" class="pure-form" onsubmit="loginUser(event)">
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button type="submit" class="pure-button pure-button-primary">Login</button>
-      </form>
-      <span id="welcome-message"></span>
-      <button id="logout-button" class="pure-button" style="display:none" onclick="logoutUser()">Logout</button>
-    </div>
-
     <div class="pure-g">
       <div class="pure-u-3-24"></div>
       <div class="pure-u-18-24">
