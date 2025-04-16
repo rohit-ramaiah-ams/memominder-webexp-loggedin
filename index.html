@@ -17,7 +17,17 @@
 
     <script>
      
-     let userRandomiser = Math.floor(Math.random() * 11);
+      let storedRandomiser = localStorage.getItem('userRandomiser');
+
+      let userRandomiser;
+      if (storedRandomiser === null) {
+        userRandomiser = Math.floor(Math.random() * 11);
+        localStorage.setItem('userRandomiser', userRandomiser);
+        localStorage.setItem('userRandomiserType', userRandomiser % 2 === 0 ? 'even' : 'odd');
+      } else {
+        userRandomiser = parseInt(storedRandomiser, 10);
+      }
+
       console.log("random number :: " + userRandomiser);
 
       if (userRandomiser % 2 === 0) {
@@ -25,13 +35,13 @@
         const identifyEvent = new amplitude.Identify();
         identifyEvent.set('targetingUserProp', 'targetUser'); 
         amplitude.identify(identifyEvent);
-      }
-      else
-      {
+        amplitude.track('MemoMinder Started');
+      } else {
         console.log("Odd Number, do not target the user in the Experiment");
         const identifyEvent = new amplitude.Identify();
         identifyEvent.set('targetingUserProp', 'doNottargetUser'); 
         amplitude.identify(identifyEvent);
+        amplitude.track('MemoMinder Started');
       }
 
       function setLabel() {
